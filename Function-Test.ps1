@@ -12,7 +12,7 @@
 function get-DJOSinfo {
 	[CmdletBinding(SupportsShouldProcess=$true,ConfirmImpact='Low')]
 	param(
-		[Parameter(Mandatory=$true,
+		[Parameter(Mandatory=$true,HelpMessage='Add help message for user',
 			ValueFromPipeline=$true,
 			ValueFromPipelineByPropertyName=$true)]
 		[Alias('hostname')]
@@ -24,41 +24,41 @@ function get-DJOSinfo {
 	)
 	BEGIN{
 		if ($nameLog){
-			Write-Verbose "Finding name log file"
+			Write-Verbose -Message 'Finding name log file'
 			$i = 0
 			Do {
 				$logfile = ".\names-$i.txt"
 				$i++
-			}while (Test-Path $logfile)
+			}while (Test-Path -Path $logfile)
 		} else {
-			Write-Verbose "Name log off"
+			Write-Verbose -Message 'Name log off'
 		}
-		Write-Debug "finished setting name log"
+		Write-Debug -Message 'finished setting name log'
 	}
 	PROCESS{ 
-		Write-Debug "Starting Process"
+		Write-Debug -Message 'Starting Process'
 
 		foreach ($computer in $computername){
 			if($PSCmdlet.ShouldProcess($computer)){
-				Write-Verbose "Connecting to $computer"
+				Write-Verbose -Message ('Connecting to {0}' -f $computer)
 				if($nameLog){
-					$computer | Out-File $logfile -Append
+					$computer | Out-File -FilePath $logfile -Append
 				}
 				try {
 					$continue = $true
-					$os = Get-WmiObject -EA 'Stop' -EV myErr -ComputerName $computer -Class win32_operatingsystem | 
-					select caption,buildnumber,osarchitecture,servicepackmajorversion
+					$os = Get-WmiObject -ErrorAction 'Stop' -ErrorVariable myErr -ComputerName $computer -Class win32_operatingsystem | 
+					select -Property caption,buildnumber,osarchitecture,servicepackmajorversion
 				} 
 				catch {
 					$continue = $false
-					$computer | Out-File '.\error.txt'
+					$computer | Out-File -FilePath '.\error.txt'
 					#$myErr | Out-File '.\errormessages.txt'
 				}
 				if($continue) {
 					$bios = Get-WmiObject -ComputerName $computer -Class win32_operatingsystem | 
-					select serialnumber
+					select -Property serialnumber
 					$processor = Get-WmiObject -ComputerName $computer -Class win32_operatingsystem | 
-					select address -First 1
+					select -Property address -First 1
 					$osarchitecture = $os.osarchitecture -replace '-bit',''
 					$properties = @{'ComputerName'=$computer;
 						'OSVersion'=$os.caption;
@@ -68,7 +68,7 @@ function get-DJOSinfo {
 						'BIOSSerial'=$bios.serialnumber;
 						'ProcArchitecture'=$processor.addresswidth}
 					$obj = New-Object -TypeName psobject -Property $properties
-					Write-Output $obj
+					Write-Output -InputObject $obj
 				}
 			}
 		}
@@ -79,11 +79,12 @@ function get-DJOSinfo {
 
 get-DJOSinfo #-computername localhost, offline -Verbose -nameLog
 
+
 # SIG # Begin signature block
 # MIID7QYJKoZIhvcNAQcCoIID3jCCA9oCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQU9qbXXf/A27NzmMMT+R0+76tX
-# QFygggINMIICCTCCAXagAwIBAgIQyWSKL3Rtw7JMh5kRI2JlijAJBgUrDgMCHQUA
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUHuY8JhcFHhpOHjtgl2FJzD+P
+# EUagggINMIICCTCCAXagAwIBAgIQyWSKL3Rtw7JMh5kRI2JlijAJBgUrDgMCHQUA
 # MBYxFDASBgNVBAMTC0VyaWtBcm5lc2VuMB4XDTE3MTIyOTA1MDU1NVoXDTM5MTIz
 # MTIzNTk1OVowFjEUMBIGA1UEAxMLRXJpa0FybmVzZW4wgZ8wDQYJKoZIhvcNAQEB
 # BQADgY0AMIGJAoGBAKYEBA0nxXibNWtrLb8GZ/mDFF6I7tG4am2hs2Z7NHYcJPwY
@@ -97,9 +98,9 @@ get-DJOSinfo #-computername localhost, offline -Verbose -nameLog
 # fJ/uMYIBSjCCAUYCAQEwKjAWMRQwEgYDVQQDEwtFcmlrQXJuZXNlbgIQyWSKL3Rt
 # w7JMh5kRI2JlijAJBgUrDgMCGgUAoHgwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKA
 # ADAZBgkqhkiG9w0BCQMxDAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYK
-# KwYBBAGCNwIBFTAjBgkqhkiG9w0BCQQxFgQUbAMijVn0YcSGuhsqF7erOX30WWgw
-# DQYJKoZIhvcNAQEBBQAEgYCHDFvrY+Bc+nFGeCVTy6QqLJ/i/VoPI5fwflaPGYxt
-# XSLFbytnidYfm9isC8FyqYc6R9gQeowJBDMDFA3m2SdgFdBGfrtjtQKFiSi/UwlN
-# OD+cyd31zqzIXCk2mkRXIxtRaoGI7aXptZzjM8SQQN9Y4GMPLv+7/bsBhdlEHcVe
-# mg==
+# KwYBBAGCNwIBFTAjBgkqhkiG9w0BCQQxFgQUAAk8hQ9/u/JZ6ON6kzb9malbIx8w
+# DQYJKoZIhvcNAQEBBQAEgYBDuG4y6GqMQ8dneTjR8MPVEB8TUEaZEVkQFaEnnxEY
+# nhkdEjQI7EzjgtkvXyVRwHdZm5O8hUsD6cX4U8/hXxlPaDH/IaLAcuCvhZYjlDoN
+# E35PkvUH+DXs7wT/DtWtMvcVHdOQ/jqOLn4ZV0zO5IW42hfd5hHqWCuigiAoO1K4
+# sA==
 # SIG # End signature block
