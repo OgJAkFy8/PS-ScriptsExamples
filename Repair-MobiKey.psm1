@@ -42,10 +42,20 @@ function Repair-MobiKey
   if (Test-Path -Path $MobikeyNetworkPath){
     Write-Verbose -Message ('Copy Files from Network to Localhost')
     Copy-Item -Path $MobikeyNetworkPath -Include *.* -Destination $MobikeyLocalPath -Force
+    $MobiKeyCerts = gci -Path .\ 
   }
   # Start the Mobikey service 
   Write-Verbose -Message ('Start Mobikey Service')
   Start-Service -Name $ServiceName
+
+
+  # Commit Point
+  # Working on testing dates to compare files
+  foreach($MobiKeyCert in $MobiKeyCerts){
+  $MobiKeyCertOrgDate = $MobiKeyCertDate.lastwritetime
+
+
+  }
    
   $ServiceStatus = (Get-Service -Name $ServiceName).Status
   Write-Verbose -Message ('Mobikey Service is {0}' -f $ServiceStatus)
