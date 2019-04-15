@@ -54,6 +54,10 @@ function Repair-MobiKey
   foreach($MobiKeyCert in $MobiKeyCerts){
   $MobiKeyCertOrgDate = $MobiKeyCertDate.lastwritetime
 
+  For($i=0;$i -lt 6;$i++){
+    if(($f[$i].CreationTimeUtc) -ne ($f[$i].lastwritetime)){
+        Write-Host ('not equal {0} -- {1}' -f $f[$i].CreationTimeUtc, $f[$i].lastwritetime)}}
+
 
   }
    
