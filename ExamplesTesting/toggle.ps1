@@ -1,33 +1,71 @@
-﻿$i=1;for(;$i -le 10;$i++){
-$p = new-item -path . -name testfile$i.txt -itemtype "file" -WhatIf:$false
-Get-ChildItem . | Format-Table Name | Out-File $p -WhatIf:$false
+﻿#requires -Version 3.0
+function Test-SafetySwitch
+{
+  for($i = 1;$i -le 3;$i++)
+  {
+    $p = New-Item -Path . -Name ('efa-testfile{0}{1}.txt' -f (Get-Date -UFormat %M%S), $i) -ItemType 'file' #-WhatIf:$false
+    Get-ChildItem -Path . |
+    Format-Table -Property Name |
+    Out-File -FilePath $p #-WhatIf:$false
+  }
 }
 
 
-Function Private:Set-safety{
-Do {
-$SafetyToggle = [int](Read-Host "Toggle")
-if ($SafetyToggle -eq 0){
-    if($WhatIfPreference -eq $true){
-    $WhatIfPreference = "False"
-    Write-Host "Safety Off" -BackgroundColor Red
-    }
-Else{
-    $WhatIfPreference ="True"
-    Write-Host "Safety On" -BackgroundColor Green
-    }
-    }
-    #cls
-}While ($SafetyToggle -eq 0) }
+Function Invoke-SetSafetyLoop
+{
+  param(
+    [Parameter(Mandatory,
+        ValueFromPipeline,
+    ValueFromPipelineByPropertyName)]
+    [Alias('toggle')]
+    [Switch]$ToggleSwitch
+  )
 
-Function private:Safety-Switch (){
-  $COOPprocess
-  $WhatIfPreference
-  If ($COOPprocess -eq 0){    
-    If ($WhatIfPreference -eq $true){
-    $WhatIfPreference = $false}
-    else{$WhatIfPreference = $true}
+  Do 
+  {
+    $ToggleSwitch = [int](Read-Host -Prompt 'Toggle')
+    if ($ToggleSwitch -eq 0)
+    {
+      if($script:WhatIfPreference -eq $true)
+      {
+        $script:WhatIfPreference = 'False'
+        Write-Host 'Safety Off' -BackgroundColor Red
+      }
+      Else
+      {
+        $script:WhatIfPreference = 'True'
+        Write-Host 'Safety On' -BackgroundColor Green
+      }
+    }
+    Clear-Host
   }
-  $COOPprocess
-  return $WhatIfPreference
+  While ($ToggleSwitch -eq 0)
+}
+
+Function Set-SafetySwitch
+{
+  [CmdletBinding()]
+  param(
+    [Alias('toggle')]
+    [Switch]$ToggleSwitch
+  )
+
+  Write-Verbose -Message ('What if Preference 1: {0}' -f $script:WhatIfPreference)
+  <#  If ($ToggleSwitch)
+  {    #>
+  If ($script:WhatIfPreference -eq $true)
+  {
+    Write-Verbose -Message 'Setting the WhatIfPreference to False'
+    $script:WhatIfPreference = $false
+  }
+  else
+  {
+    Write-Verbose -Message 'Setting the WhatIfPreference to True'
+    $script:WhatIfPreference = $true
+  }
+  #}
+  # Write-Verbose "Toggle Switch: $ToggleSwitch"
+  Write-Verbose -Message ('What if Preference 2: {0}' -f $script:WhatIfPreference)
+  
+  #return $WhatIfPreference
 }
