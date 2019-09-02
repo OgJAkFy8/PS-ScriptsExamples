@@ -11,7 +11,3 @@ function Get-Something
 
   "You entered $Name."
 }
-
-Get-ADComputer -Filter 'Name -like "D114*"' -searchbase "OU=OMC South,OU=MASH Services,DC=rsrc,DC=osd,DC=mil"-Properties IPv4Address |where IPv4Address -like "214.18.207.*" | FT Name,DNSHostName,IPv4Address -A
-$a=Get-ADComputer -Filter 'Name -like "D*"' -searchbase "OU=OMC South,OU=MASH Services,DC=rsrc,DC=osd,DC=mil"-Properties IPv4Address |where IPv4Address -like "214.18.*.*" | sort Name | FT Name
-
