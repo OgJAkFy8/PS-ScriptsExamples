@@ -8,7 +8,7 @@ $PluginCategory = "vSphere"
 
 
 
-Write-EventLog –LogName "PS Test Log" –Source “My Script” –EntryType Information –EventID 100 –Message “This is a test message.”
+Write-EventLog -LogName "PS Test Log" -Source "My Script" -EntryType Information -EventID 100 -Message "This is a test message."
 
 $ArrayList = New-Object -TypeName 'System.Collections.ArrayList';
 $Array = @();
@@ -134,11 +134,11 @@ $o | export-csv "outputfile.csv" -notypeinformation
 
 #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Get and display ENV data >>>>>>>>>#
 $UserInfo = 0..5
-$UserInfo[0] =$env:COMPUTERNAME
-$UserInfo[1]=$env:USERNAME
-$UserInfo[2]=$env:HOMESHARE
-$UserInfo[3]=$env:LOGONSERVER
-$UserInfo[4]=$env:USERDOMAIN 
+$UserInfo[0] = $env:COMPUTERNAME
+$UserInfo[1] = $env:USERNAME
+$UserInfo[2] = $env:HOMESHARE
+$UserInfo[3] = $env:LOGONSERVER
+$UserInfo[4] = $env:USERDOMAIN 
 
 
 Get-Childitem -Path Env:* | Out-GridView -Title "Session Information from Get-ChildItem -path Env:*" 
@@ -234,10 +234,10 @@ try
 {
   $a = $env:USERNAME
 $b = $env:COMPUTERNAME
-Read-Host "Username:", $a
-Read-Host "ComputerName:", $b
+Read-Host "Username", $a
+Read-Host "ComputerName", $b
 Write-Warning "$a on $b"
-Write-Host "Press any key to exit ..."
+Write-Output ('Press any key to exit ... {0}' -f $b)
 $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
 
 }
