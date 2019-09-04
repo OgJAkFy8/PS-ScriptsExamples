@@ -1,4 +1,4 @@
-﻿#requires -runasadministrator
+﻿# r equires - runas administrator
 
 function Repair-MobiKey 
 {
