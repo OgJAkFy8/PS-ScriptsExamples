@@ -2,7 +2,7 @@
 {
   <#
       .SYNOPSIS
-      Describe purpose of "Show-CliGraphicMenu" in 1-2 sentences.
+      Describe purpose of "Show-AsciiMenu" in 1-2 sentences.
 
       .DESCRIPTION
       Add a more complete description of what the function does.
@@ -23,7 +23,7 @@
       Describe parameter -MenuItemColor.
 
       .EXAMPLE
-      Show-CliGraphicMenu -Title Value -MenuItems Value -TitleColor Value -LineColor Value -MenuItemColor Value
+      Show-AsciiMenu -Title Value -MenuItems Value -TitleColor Value -LineColor Value -MenuItemColor Value
       Describe what this call does
 
       .NOTES
@@ -31,7 +31,7 @@
 
       .LINK
       URLs to related sites
-      The first link is opened by Get-Help -Online Show-CliGraphicMenu
+      The first link is opened by Get-Help -Online Show-AsciiMenu
 
       .INPUTS
       List of input types that are accepted by this function.
@@ -39,7 +39,6 @@
       .OUTPUTS
       List of output types produced by this function.
   #>
-
 
 
   [CmdletBinding()]
@@ -55,80 +54,118 @@
 
     [string]$MenuItemColor = 'Cyan'
   )
-
-
-  #Clear-Host
- 
-  $TitleCount = $Title.Length
-  $LongestMenuItem = ($MenuItems | Measure-Object -Maximum -Property Length).Maximum
+  Begin{
+    # Set Variables
+    $i = 1
+    $Tab = "`t"
+    $VertLine = '║'
   
-  if  ($TitleCount -lt $LongestMenuItem)
-  {
-    if($LongestMenuItem % 2 -eq 1){
-      $LongestMenuItem = $LongestMenuItem + 1
-      }
-      $reference = $LongestMenuItem 
-
-  }
-  else
+    function Write-HorizontalLine
     {
-    $reference = $TitleCount
+      param
+      (
+        [Parameter(Position = 0)]
+        [string]
+        $DrawLine = 'Top'
+      )
+      Switch ($DrawLine) {
+        Top 
+        {
+          Write-Host ('╔{0}╗' -f $HorizontalLine) -ForegroundColor $LineColor
+        }
+        Middle 
+        {
+          Write-Host ('╠{0}╣' -f $HorizontalLine) -ForegroundColor $LineColor
+        }
+        Bottom 
+        {
+          Write-Host ('╚{0}╝' -f $HorizontalLine) -ForegroundColor $LineColor
+        }
+      }
+    }
+    function Get-Padding
+    {
+      param
+      (
+        [Parameter(Mandatory, Position = 0)]
+        [int]$Multiplier 
+      )
+      "`0"*$Multiplier
+    }
+    function Write-MenuTitle
+    {
+      Write-Host ('{0}{1}' -f $VertLine, $TextPadding) -NoNewline -ForegroundColor $LineColor
+      Write-Host ($Title) -NoNewline -ForegroundColor $TitleColor
+      if($TotalTitlePadding % 2 -eq 1)
+      {
+        $TextPadding = Get-Padding -Multiplier ($TitlePaddingCount + 1)
+      }
+      Write-Host ('{0}{1}' -f $TextPadding, $VertLine) -ForegroundColor $LineColor
+    }
+    function Write-MenuItems
+    {
+      foreach($menuItem in $MenuItems)
+      {
+        $number = $i++
+        $ItemPaddingCount = $TotalLineWidth - $menuItem.Length - 6 #This number is needed to offset the Tab, space and 'dot'
+        $ItemPadding = Get-Padding -Multiplier $ItemPaddingCount
+        Write-Host $VertLine  -NoNewline -ForegroundColor $LineColor
+        Write-Host ('{0}{1}. {2}{3}' -f $Tab, $number, $menuItem, $ItemPadding) -NoNewline -ForegroundColor $LineColor
+        Write-Host $VertLine -ForegroundColor $LineColor
+      }
+    }
   }
 
-  #$reference = $reference + 10
-  $TotalLineCount = $reference + 8
-  $Line = '═'*$TotalLineCount
+  Process
+  {
+    $TitleCount = $Title.Length
+    $LongestMenuItemCount = ($MenuItems | Measure-Object -Maximum -Property Length).Maximum
+    Write-Debug -Message ('LongestMenuItemCount = {0}' -f $LongestMenuItemCount)
+
+    if  ($TitleCount -gt $LongestMenuItemCount)
+    {
+      $ItemWidthCount = $TitleCount
+    }
+    else
+    {
+      $ItemWidthCount = $LongestMenuItemCount
+    }
+
+    if($ItemWidthCount % 2 -eq 1)
+    {
+      $ItemWidth = $ItemWidthCount + 1
+    }
+    else
+    {
+      $ItemWidth = $ItemWidthCount
+    }
+    Write-Debug -Message ('Item Width = {0}' -f $ItemWidth)
+   
+    $TotalLineWidth = $ItemWidth + 10
+    Write-Debug -Message ('Total Line Width = {0}' -f $TotalLineWidth)
   
-  $RemaniningCountForTitleLine = $reference - $TitleCount
-  #$RemaniningCountForTitleLineForEach = $RemaniningCountForTitleLine / 2
-  $RemaniningCountForTitleLineForEach = [math]::Ceiling($RemaniningCountForTitleLine / 2)
+    $TotalTitlePadding = $TotalLineWidth - $TitleCount
+    Write-Debug -Message ('Total Title Padding  = {0}' -f $TotalTitlePadding)
+  
+    $TitlePaddingCount = [math]::Floor($TotalTitlePadding / 2)
+    Write-Debug -Message ('Title Padding Count = {0}' -f $TitlePaddingCount)
+
+    $HorizontalLine = '═'*$TotalLineWidth
+    $TextPadding = Get-Padding -Multiplier $TitlePaddingCount
+    Write-Debug -Message ('Text Padding Count = {0}' -f $TextPadding.Length)
 
 
-
-  $LineForTitleLine = "`0"*$RemaniningCountForTitleLineForEach
-  $Tab = "`t"
-
-  Write-Host '╔' -NoNewline -f $LineColor
-  Write-Host $Line -NoNewline -f $LineColor
-  Write-Host '╗' -f $LineColor
-  if($RemaniningCountForTitleLine % 2 -eq 1)
-  {
-    $RemaniningCountForTitleLineForEach = $RemaniningCountForTitleLineForEach - 1
-    $LineForTitleLine2 = "`0"*$RemaniningCountForTitleLineForEach
-    Write-Host '║' -f $LineColor -nonewline
-    Write-Host $LineForTitleLine -nonewline -f $LineColor
-    Write-Host $Title -f $TitleColor -nonewline
-    Write-Host $LineForTitleLine2 -f $LineColor -nonewline
-    Write-Host '║' -f $LineColor
+    Write-HorizontalLine -DrawLine Top
+    Write-MenuTitle
+    Write-HorizontalLine -DrawLine Middle
+    Write-MenuItems
+    Write-HorizontalLine -DrawLine Bottom
   }
-  else
-  {
-    Write-Host '║' -nonewline -f $LineColor
-    Write-Host $LineForTitleLine -nonewline -f $LineColor
-    Write-Host $Title -f $TitleColor -nonewline
-    Write-Host $LineForTitleLine -nonewline -f $LineColor
-    Write-Host '║' -f $LineColor
-  }
-  Write-Host '╠' -NoNewline -f $LineColor
-  Write-Host $Line -NoNewline -f $LineColor
-  Write-Host '╣' -f $LineColor
-  $i = 1
-  foreach($menuItem in $MenuItems)
-  {
-    $number = $i++
-    $RemainingCountForItemLine = $TotalLineCount - $menuItem.Length - 5
-    $LineForItems = "`0"*$RemainingCountForItemLine
-    Write-Host '║' -nonewline -f $LineColor 
-    Write-Host $Tab -nonewline
-    Write-Host $number"." -nonewline -f $MenuItemColor
-    Write-Host $menuItem -nonewline -f $MenuItemColor
-    Write-Host $LineForItems -nonewline -f $LineColor
-    Write-Host '║' -f $LineColor
-  }
-  Write-Host '╚' -NoNewline -f $LineColor
-  Write-Host $Line -NoNewline -f $LineColor
-  Write-Host '╝' -f $LineColor
+
+  End
+  {}
 }
 
+#Show-AsciiMenu -Title 'THIS IS THE TITLE' -MenuItems 'Exchange Server', 'Active Directory', 'Sytem Center Configuration Manager', 'Lync Server' -TitleColor Red  -MenuItemColor green
+Show-AsciiMenu -Title 'THIS IS THE TITLE' -MenuItems 'Exchange Server', 'Active Directory', 'Sytem Center Configuration Manager' #-Debug
 
-Show-AsciiMenu -Title 'THIS IS TITLE' -MenuItems 'Exchange Server','Active Directory','Sytem Center Configuration Manager','Lync Server','Microsoft Azure' -TitleColor Red -LineColor Cyan -MenuItemColor Yellow
