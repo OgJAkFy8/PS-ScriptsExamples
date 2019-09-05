@@ -23,48 +23,55 @@ Function Show-DynamicMenu
   #>
   param
   (
-    [Parameter(Mandatory=$false)]
-    [string]$ChildItemMode = 'D'
+    [Parameter(Mandatory = $false)]
+    [switch]$Files,
+    [Switch]$Folders,
+    [Switch]$All
   )
   
-  
-  function Optimize-List
+
+
+  $ConslHt = ($Host.UI.RawUI.WindowSize.Height - 4)
+  if($ConslHt -lt 22){
+  $DisplayFirst = 20}
+  if($Files)
   {
-    param
-    (
-      [Parameter(Mandatory=$true, ValueFromPipeline=$true, HelpMessage='Data to filter')]
-      $InputObject
-    )
-    process
-    {
-      if ($InputObject.mode -match $ChildItemMode)
-      {
-        $InputObject
-      }
-    }
+    $DirectoryItems = Get-ChildItem -File | Select-Object -First $DisplayFirst
   }
-  $DirectoryItems = Get-ChildItem | Optimize-List
+  if($Folders)
+  {
+    $DirectoryItems = Get-ChildItem -Directory | Select-Object -First $DisplayFirst
+  }
+  if($All)
+  {
+    $DirectoryItems = Get-ChildItem | Select-Object -First $DisplayFirst
+  }
+
   $menu = @{}
-  $folderCount = $DirectoryItems.Count-1
+  $ItemCount = $DirectoryItems.Count
+
+
+Write-Host ('0. {0}' -f 'Exit')
   for($i = 0;$i -lt $DirectoryItems.count;$i++)
   {
-    if($i -eq 0)
-    {
-      Write-Host ('{0}. {1}' -f $i, 'Exit')
-      $i++
-    }
-    Write-Host ('{0}. {1}' -f $i, $DirectoryItems[$i].name)
+    #Write-Host ('{0}. {1}' -f ($i+1), $DirectoryItems[$i].name)
     $menu.Add($i,($DirectoryItems[$i].name))
   }
+
+  $menu
   $ans = 99
-  do{[int]$ans = Read-Host -Prompt 'Select number'
-    if($ans -ge $folderCount )
+  do
+  {
+    [int]$ans = Read-Host -Prompt 'Select number'
+    if($ans -ge $ItemCount )
     {
-      Write-Host ('Select {0} or below' -f $folderCount)
+      Write-Host ('Select {0} or below' -f $ItemCount)
     }
-  } while($ans -notin 0..$folderCount)
+  }
+  while($ans -notin 0..$ItemCount)
+
   $selection = $menu.Item($ans)
   
   # Visual output for Testing
-  Write-host 'You selected:'$selection -ForegroundColor Magenta
+  Write-Host 'You selected:'$selection -ForegroundColor Magenta
 }
