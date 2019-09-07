@@ -1,4 +1,6 @@
-﻿#requires -Version 3.0
+﻿# This has been superseded with "Set-Safety Switch.psm1" and "Set-SafetySwitch_Lite.ps1" This has only been left for notes.
+
+
 function Test-SafetySwitch
 {
   for($i = 1;$i -le 3;$i++)
