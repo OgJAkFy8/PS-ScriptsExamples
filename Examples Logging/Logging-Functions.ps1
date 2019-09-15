@@ -1,4 +1,6 @@
-﻿Function Log-Start{
+﻿#requires -Version 3.0
+Function Log-Start
+{
   <#
       .SYNOPSIS
       Creates log file
@@ -38,11 +40,11 @@
   #>
     
   
-  Param ([Parameter(Mandatory=$true,HelpMessage='Path of where log is to be created. Example: C:\Windows\Temp')]
+  Param ([Parameter(Mandatory = $true,HelpMessage = 'Path of where log is to be created. Example: C:\Windows\Temp')]
     [string]$LogPath, 
-    [Parameter(Mandatory=$true,HelpMessage='Name of log file to be created. Example: Test_Script.log')]
+    [Parameter(Mandatory = $true,HelpMessage = 'Name of log file to be created. Example: Test_Script.log')]
     [string]$LogName, 
-    [Parameter(Mandatory=$true,HelpMessage='Version of the running script which will be written in the log. Example: 1.5')]
+    [Parameter(Mandatory = $true,HelpMessage = 'Version of the running script which will be written in the log. Example: 1.5')]
   [string]$ScriptVersion)
   
   Process{
@@ -52,7 +54,8 @@
     $sFullPath = $LogPath + '\' + $LogName
     
     #Check if file exists and delete if it does
-    If((Test-Path -Path $sFullPath)){
+    If((Test-Path -Path $sFullPath))
+    {
       Remove-Item -Path $sFullPath -Force
     }
     
@@ -80,7 +83,8 @@
   }
 }
 
-Function Log-Write{
+Function Log-Write
+{
   <#
       .SYNOPSIS
       Writes to a log file
@@ -103,9 +107,9 @@ Function Log-Write{
       Log-Write -LogPath "C:\Windows\Temp\Test_Script.log" -LineValue "This is a new line which I am appending to the end of the log file."
   #>
   Param (
-    [Parameter(Mandatory=$true,HelpMessage='Full path of the log file you want to write to. Example: C:\Windows\Temp\Test_Script.log')]
+    [Parameter(Mandatory = $true,HelpMessage = 'Full path of the log file you want to write to. Example: C:\Windows\Temp\Test_Script.log')]
     [string]$LogPath, 
-    [Parameter(Mandatory=$true,HelpMessage='The string that you want to write to the log')]
+    [Parameter(Mandatory = $true,HelpMessage = 'The string that you want to write to the log')]
     [string]$LineValue
   )
   Process{
@@ -155,11 +159,11 @@ Function Log-Error
   #>
   
   Param (
-    [Parameter(Mandatory=$true,HelpMessage='Full path of the log file you want to write to. Example: C:\Windows\Temp\Test_Script.log')]
+    [Parameter(Mandatory = $true,HelpMessage = 'Full path of the log file you want to write to. Example: C:\Windows\Temp\Test_Script.log')]
     [string]$LogPath, 
-    [Parameter(Mandatory=$true,HelpMessage="The description of the error you want to pass (use $_.Exception)")]
+    [Parameter(Mandatory = $true,HelpMessage = 'The description of the error you want to pass')]
     [string]$ErrorDesc, 
-    [Parameter(Mandatory=$true,HelpMessage='If set to True, runs Log-Finish and then exits script')]
+    [Parameter(Mandatory = $true,HelpMessage = 'If set to True, runs Log-Finish and then exits script')]
     [bool]$ExitGracefully
   )
   
@@ -170,7 +174,8 @@ Function Log-Error
     #Write to screen for debug mode
     Write-Debug -Message ($ErrorMessage -f $ErrorDesc)
     #If $ExitGracefully = True then run Log-Finish and exit script
-    If ($ExitGracefully -eq $True){
+    If ($ExitGracefully -eq $true)
+    {
       Log-Finish -LogPath $LogPath
       Break
     }
@@ -223,9 +228,9 @@ Function Log-Finish
   
   
   Param (
-    [Parameter(Mandatory=$true,HelpMessage='Full path of the log file you want to write finishing data to')]
+    [Parameter(Mandatory = $true,HelpMessage = 'Full path of the log file you want to write finishing data to')]
     [string]$LogPath, 
-    [Parameter(Mandatory=$true,HelpMessage='If this is set to True, then the function will not exit the calling script, so that further execution can occur')]
+    [Parameter(Mandatory = $true,HelpMessage = 'If this is set to True, then the function will not exit the calling script, so that further execution can occur')]
     [string]$NoExit
   )
   
@@ -245,7 +250,8 @@ Function Log-Finish
     Write-Debug -Message $StarLineBox
   
     #Exit calling script if NoExit has not been specified or is set to False
-    If(!($NoExit) -or ($NoExit -eq $False)){
+    If(!($NoExit) -or ($NoExit -eq $False))
+    {
       Exit
     }    
   }
@@ -290,9 +296,9 @@ Function Log-Email
   
   
   Param (
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory = $true)]
     [string]$LogPath, 
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory = $true)]
     [string]$EmailFrom, 
     [Parameter(Mandatory)]
     [string]$EmailTo, 
@@ -304,16 +310,17 @@ Function Log-Email
   {
     Try
     {
-      $sBody = (Get-Content -Path $LogPath | out-string)
+      $sBody = (Get-Content -Path $LogPath | Out-String)
       
       #Create SMTP object and send email
       $sSmtpServer = 'smtp.yourserver'
-      $oSmtp = new-object -TypeName Net.Mail.SmtpClient -ArgumentList ($sSmtpServer)
+      $oSmtp = New-Object -TypeName Net.Mail.SmtpClient -ArgumentList ($sSmtpServer)
       $oSmtp.Send($EmailFrom, $EmailTo, $EmailSubject, $sBody)
       Exit 0
     }
     
-    Catch{
+    Catch
+    {
       Exit 1
     } 
   }
