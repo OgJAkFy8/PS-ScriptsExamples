@@ -1,4 +1,4 @@
-﻿# This has been superseded with "Set-Safety Switch.psm1" and "Set-SafetySwitch_Lite.ps1" This has only been left for notes.
+﻿# This has been superseded with "Set-Safety Switch.ps1" and "Set-SafetySwitch_Lite.ps1" This has only been left for notes.
 
 
 function Test-SafetySwitch
