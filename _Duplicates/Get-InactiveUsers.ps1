@@ -2,8 +2,8 @@
 #Requires -Module ActiveDirectory
 
 
-$ADSearchBase = 'OU=SOUTH,OU=OMC,OU=OSD,OU=Enterprise Tenants,DC=usr,DC=osd,DC=mil'
-$ReportFolder = '\\rsrcngmfs02\OMC-CA_Org\OMC-S\IT\Reports\DisabledUsers'
+$ADSearchBase = 'OU=SOUTH,DC=Knarrstudio,DC=net'
+$ReportFolder = '\\Reportserver\DisabledUsers'
 $DiabledCount = 0
 $DateNow = Get-Date -UFormat %Y%m%d-%H%M
 $ReportFile = (('{0}\{1}-Report.csv' -f $ReportFolder, $DateNow))
@@ -174,7 +174,7 @@ ForEach ($Item in $Users)
 
 ___________________________
 
-$ADSearchBase = 'OU=SOUTH,OU=OMC,OU=OSD,OU=Enterprise Tenants,DC=usr,DC=osd,DC=mil'
+$ADSearchBase = 'OU=SOUTH,DC=Knarrstudio,DC=net'
 
 
 # Get all users, computers, and service accounts that are disabled
