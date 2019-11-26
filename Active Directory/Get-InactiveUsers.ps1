@@ -2,8 +2,8 @@
 #Requires -Module ActiveDirectory
 
 
-$ADSearchBase = 'OU=SOUTH,OU=OMC,OU=OSD,OU=Enterprise Tenants,DC=usr,DC=osd,DC=mil'
-$ReportFolder = '\\rsrcngmfs02\OMC-CA_Org\OMC-S\IT\Reports\DisabledUsers'
+$ADSearchBase = 'OU=SOUTH,DC=knarrstudio,DC=com'
+$ReportFolder = '\\FileServer\Reports\DisabledUsers'
 $DiabledCount = 0
 $DateNow = Get-Date -UFormat %Y%m%d-%H%M
 $ReportFile = (('{0}\{1}-Report.csv' -f $ReportFolder, $DateNow))
