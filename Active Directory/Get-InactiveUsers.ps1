@@ -174,8 +174,6 @@ ForEach ($Item in $Users)
 
 ___________________________
 
-$ADSearchBase = 'OU=SOUTH,OU=OMC,OU=OSD,OU=Enterprise Tenants,DC=usr,DC=osd,DC=mil'
-
 
 # Get all users, computers, and service accounts that are disabled
 Search-ADAccount -SearchBase $ADSearchBase -AccountDisabled | Format-Table -Property Name, ObjectClass -AutoSize
