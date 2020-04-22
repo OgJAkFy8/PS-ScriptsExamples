@@ -50,7 +50,7 @@ Function Log-Start
   Process{
     $RunningProcess = 'Running script version [{0}].'
     $StartProcessing = "Started processing at [$([DateTime]::Now)]."
-    $StarLineBox = '***************************************************************************************************'
+    $StarLineBox =  ('*' * 99)
     $sFullPath = $LogPath + '\' + $LogName
     
     #Check if file exists and delete if it does

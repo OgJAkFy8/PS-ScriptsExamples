@@ -1,6 +1,8 @@
 $a = $env:USERNAME
 $b = $env:COMPUTERNAME
-Read-Host 'Username ',$a
-Read-Host 'ComputerName ',$b
-Write-Host 'Press any key to exit ...'
-$x = $host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
+$r = Read-Host -Prompt 'Username ', $a
+$t = Read-Host -Prompt 'ComputerName ', $b
+Write-Host -Message 'Press any key to exit ...'
+$null = $host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
+$r
+$t

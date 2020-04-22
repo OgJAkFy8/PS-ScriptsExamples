@@ -1,5 +1,5 @@
 ﻿#region Come on man
-throw "You're not supposed to hit F5"
+throw "You're not supposed to hit F8"
 #endregion"
 
 function Write-EventLog
@@ -8,7 +8,7 @@ function Write-EventLog
     param(  
         [Parameter(Mandatory,ValueFromPipelineByPropertyName)][String]$LogName,
         [Parameter(Mandatory,ValueFromPipelineByPropertyName)][String]$Source,
-        [Parameter(Mandatory,ValueFromPipelineByPropertyName)][Int32]$EventId,
+        [Parameter(Mandatory,ValueFromPipelineByPropertyName)][int]$EventId,
         [Parameter(ValueFromPipelineByPropertyName)][Diagnostics.EventLogEntryType]$EntryType,
         [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)][String]$Message,
         [Parameter(ValueFromPipelineByPropertyName)][Int16]$Category,
@@ -21,7 +21,7 @@ function Write-EventLog
     {
         if($Force)
         {
-            if (! ([System.Diagnostics.EventLog]::Exists($LogName) -and [System.Diagnostics.EventLog]::SourceExists($Source) )) 
+            if (! ([Diagnostics.EventLog]::Exists($LogName) -and [Diagnostics.EventLog]::SourceExists($Source) )) 
             {
                 New-EventLog -LogName $LogName -Source $Source 
             }
@@ -47,19 +47,31 @@ function Write-EventLog
     }
 }
 
-Write-EventLog –LogName "PS Test Log" –Source “My Script” –EntryType Information –EventID 100 –Message “This is a test message.”
+Write-EventLog -LogName 'PS Test Log' -Source 'My Script' -EntryType Information -EventID 100 -Message 'This is a test message.'
 
 
 
-$Script:e_logname = "PS Test Log" 
-$Script:e_source = "DeleteFilesOlder"
+$Script:e_logname = 'PS Test Log' 
+$Script:e_source = 'DeleteFilesOlder'
 
 
-function f_Event($e_message,$e_id,$e_type){
+function f_Event{
     #Used to ease the writing events to the log.
     # e_logname and e_source are defined in the User Settings
-    if($e_type -eq $null){$e_type = "Information"}
-    Write-EventLog –LogName $e_logname –Source $e_source –EntryType $e_type –EventID $e_id –Message $e_message
+    
+  param
+  (
+    [Parameter(Mandatory=$true)]
+    $e_message,
+
+    [Parameter(Mandatory=$true)]
+    [Object]$e_id,
+
+    [Parameter(Mandatory=$true)]
+    [Object]$e_type
+  )
+if($e_type -eq $null){$e_type = 'Information'}
+    Write-EventLog -LogName $e_logname -Source $e_source -EntryType $e_type -EventID $e_id -Message $e_message
     }
 
 
