@@ -1,41 +1,55 @@
 ﻿$a = $env:USERNAME
 $b = $env:COMPUTERNAME
-Write-Host "Username: ",$a
-Write-Host "ComputerName: ",$b
-Write-Host "Press any key to exit ..."
-$x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+Write-Host 'Username: ', $a
+Write-Host 'ComputerName: ', $b
+Write-Host 'Press any key to exit ...'
+$x = $host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
 
 
-Get-Service | ForEach-Object -Process { if ($_.Status -eq 'Running') { $_ } }
+Get-Service | ForEach-Object -Process {
+  if ($_.Status -eq 'Running') 
+  {
+    $_ 
+  } 
+}
 
-Unlock-ADAccount -Identity "CN=service-omc-south-digsend,OU=OMC South,OU=MASH Services,DC=rsrc,DC=osd,DC=mil"
-
-
-$a = (Get-ADComputer -Filter 'Name -like "D*"' -searchbase "OU=OMC South,OU=MASH Services,DC=rsrc,DC=osd,DC=mil"-Properties IPv4Address |where IPv4Address -like "214.18.*.*" | FT Name -A)
-$a | Out-File -filepath Workstations.txt
- .count
-
-Set-Location "E:\Scripts\test"
-$a = get-content Workstations.txt
-$a | foreach {
-    if (!(get-hotfix -id KB3114409 -computername $_)) {
-    $_ | out-file -filepath Installed-KB3114409.txt}}
+Unlock-ADAccount -Identity 'CN=Office,OU=knarrstudio,DC=com'
 
 
-    add-content $_ -path Installed-KB3114409.txt 
+$a = (Get-ADComputer -Filter 'Name -like "D*"' -searchbase 'CN=Office,OU=knarrstudio,DC=com' -Properties IPv4Address |
+  Where-Object -Property IPv4Address -Like -Value '214.18.*.*' |
+Format-Table -Property Name -AutoSize)
 
-    # User logged on to a physical box
-$a = (Get-ADComputer -Filter 'Name -like "D*"' -searchbase "OU=OMC South,OU=MASH Services,DC=rsrc,DC=osd,DC=mil"-Properties IPv4Address |where IPv4Address -like "214.18.*.*" | FT Name -A)
-Get-WmiObject -Class Win32_ComputerSystem | Select-object -ExpandProperty UserName
+$a | Out-File -FilePath Workstations.txt
+
+
+
+Set-Location -Path 'E:\Scripts\test'
+$a = Get-Content -Path Workstations.txt
+$a | ForEach-Object -Process {
+  if (!(Get-HotFix -Id KB3114409 -ComputerName $_)) 
+  {
+    $_ | Out-File -FilePath Installed-KB3114409.txt
+  }
+}
+
+
+Add-Content -Value $_ -Path Installed-KB3114409.txt 
+
+# User logged on to a physical box
+$a = (Get-ADComputer -Filter 'Name -like "D*"' -searchbase 'CN=Office,OU=knarrstudio,DC=com' -Properties IPv4Address |
+  Where-Object -Property IPv4Address -Like -Value '192.168.18.*' |
+Format-Table -Property Name -AutoSize)
+Get-WmiObject -Class Win32_ComputerSystem | Select-Object -ExpandProperty UserName
 
 
 # Owners of explorer.exe processes (desktop is an Explorer process)
 Get-WmiObject -Class Win32_Process -Filter 'Name="explorer.exe"'  |
-  ForEach-Object {
-    $owner = $_.GetOwner()
-    '{0}\{1}' -f  $owner.Domain, $owner.User
-  } | 
-  Sort-Object -Unique
+ForEach-Object -Process {
+  $owner = $_.GetOwner()
+  '{0}\{1}' -f  $owner.Domain, $owner.User
+} | 
+Sort-Object -Unique
 
 
 

@@ -11,12 +11,12 @@
 
 ##3  ====
 function Test-EventLogSource() {
-Param(
+  Param(
     [Parameter(Mandatory=$true)]
     [string] $SourceName
-)
+  )
 
-[System.Diagnostics.EventLog]::SourceExists($SourceName)
+  [System.Diagnostics.EventLog]::SourceExists($SourceName)
 }
 
 Test-EventLogSource "My Script"
@@ -27,7 +27,7 @@ Test-EventLogSource "My Script"
 
 $eventlogexists = [System.Diagnostics.EventLog]::Exists("System")
 if ([System.Diagnostics.EventLog]::Exists("PS Test Log") -eq $false) {
-[System.Diagnostics.EventLog]::SourceExists("Get-Drives")
+  [System.Diagnostics.EventLog]::SourceExists("Get-Drives")
 
 } 
 
@@ -37,26 +37,25 @@ if ([System.Diagnostics.EventLog]::Exists("PS Test Log") -eq $false) {
 #####   MENU TESTING #####
 
     Clear-Host
-    write-host @"
+$MenuTitle = 'Quick'
+$MenuList = (@"
 --------------------------------------------------
 
-      Welcome to the Maintenance Center
+      Welcome to the {0} Menu
 
-    0 = Set Safety On/Off
-    1 = Move all VM's to one host
-    2 = Reboot Empty host
-    3 = Balance all VM's per 'tag'
-    4 = Move, Reboot and Balance VM environment
-    5 = VM/Host information
-    E = to Exit
+    0 = Exit
+    1 = Option One
+    2 = Option Two
 
 --------------------------------------------------
-"@ -ForegroundColor Green
+"@  -f $MenuTitle )
+
+Wrtie-Host $MenuList -ForegroundColor Green
 
     $answer = read-host "Please Make a Selection"  
 
 
-    #process the Account Management menu, each switch option calls function
+#Quick Menu. 
 while ($choice -ne 0){
     #Display the menu options function
 
@@ -66,8 +65,6 @@ while ($choice -ne 0){
             0 {break} #Return to main menu
             1 {add-ADUser}
             2 {create-HomeFolder}
-            3 {add-ExchangeMailbox}
-            4 {disable-ADUser}
             default {write-host "`nPlease choose a selection." -foregroundcolor red}
         }
 }
@@ -100,7 +97,7 @@ $Options = [System.Management.Automation.Host.ChoiceDescription[]]($WindowsME, $
 $SelectOS = $host.ui.PromptForChoice($title, $message, $options, 0) 
  
     switch($SelectOS){
-1 {
+  1 {
     Clear-Host
     $HostOne = Read-Host "Enter IP Address of host to move from"
     $HostTwo = Read-Host "Enter IP Address of host to move to"
@@ -109,16 +106,16 @@ $SelectOS = $host.ui.PromptForChoice($title, $message, $options, 0)
     if($HostTwo -ne $HostOne){
         MoveVMs $HostOne $HostTwo
         }}
-2 {
+  2 {
     Clear-Host
     Remove-COOPs}
-3 {
+  3 {
     Clear-Host
     Create-COOPs}
-4 {
+  4 {
     Clear-Host
     BalanceVMs}
-Default {Write-Host "Exit"}
+  Default {Write-Host "Exit"}
 }
 
 
@@ -127,35 +124,35 @@ Default {Write-Host "Exit"}
 
 
 Function Invoke-Menu {
-[cmdletbinding()]
-Param(
-[Parameter(Position=0,Mandatory=$True,HelpMessage="Enter your menu text")]
-[ValidateNotNullOrEmpty()]
-[string]$Menu,
-[Parameter(Position=1)]
-[ValidateNotNullOrEmpty()]
-[string]$Title = "My Menu",
-[Alias("cls")]
-[switch]$ClearScreen
-)
+  [cmdletbinding()]
+  Param(
+    [Parameter(Position=0,Mandatory=$True,HelpMessage="Enter your menu text")]
+    [ValidateNotNullOrEmpty()]
+    [string]$Menu,
+    [Parameter(Position=1)]
+    [ValidateNotNullOrEmpty()]
+    [string]$Title = "My Menu",
+    [Alias("cls")]
+    [switch]$ClearScreen
+  )
  
-#clear the screen if requested
-if ($ClearScreen) { 
- Clear-Host 
-}
+  #clear the screen if requested
+  if ($ClearScreen) { 
+    Clear-Host 
+  }
  
-#build the menu prompt
-$menuPrompt = $title
-#add a return
-$menuprompt+="`n"
-#add an underline
-$menuprompt+="-"*$title.Length
-#add another return
-$menuprompt+="`n"
-#add the menu
-$menuPrompt+=$menu
+  #build the menu prompt
+  $menuPrompt = $title
+  #add a return
+  $menuprompt+="`n"
+  #add an underline
+  $menuprompt+="-"*$title.Length
+  #add another return
+  $menuprompt+="`n"
+  #add the menu
+  $menuPrompt+=$menu
  
-Read-Host -Prompt $menuprompt
+  Read-Host -Prompt $menuprompt
  
 } #end function
         

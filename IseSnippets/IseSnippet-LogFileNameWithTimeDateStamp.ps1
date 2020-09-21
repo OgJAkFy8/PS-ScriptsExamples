@@ -1,20 +1,5 @@
-﻿#Requires -Version 3.0 
-#  R e q uires -Modules ActiveDirectory, DnsClient
-#Requires -RunAsAdministrator
+$m = @'
 
-<#
-    .SYNOPSIS
-    Copy backup files from source to destination and capture metadata for historical information and future planning
-    .DESCRIPTION
-    <A detailed description of the script>
-    .PARAMETER <paramName>
-    <Description of script parameter>
-    .EXAMPLE
-    <An example of using the script>
-#>
-
-function New-TimedStampFileName 
-{
   <#
       .SYNOPSIS
       Standardizing filenames with timestamps.  Does not create the file.  Just the file name.
@@ -47,6 +32,9 @@ function New-TimedStampFileName
       .OUTPUTS
       String
   #>
+
+  function New-TimedStampFileName 
+  {
   [cmdletbinding(DefaultParameterSetName = 'FileName')]
   param
   (
@@ -78,42 +66,6 @@ function New-TimedStampFileName
     ('{0}-{1}.{2}' -f $baseNAME, $DateStamp, $FileType)
   }
 }
-
-
-function Get-DriveInformation
-{
-  #Content
-  get-wmiobject -Class Win32_Share | Sort-Object -Property Name | Select-Object -Property Name, Path, Status
-
-  get-wmiobject -Class Win32_MappedLogicalDisk | Select-Object -Property Name, Description, FileSystem, @{Label='Size';Expression={"{0,12:n0} MB" -f ($_.Size/1mb)}}, @{Label="Free Space";Expression={"{0,12:n0} MB" -f ($_.FreeSpace/1mb)}}, ProviderName
-   
-
-}
-
-function Get-FileMetadata
-{
-  #Content
-  
-
-}
-
-function Move-Files
-{
-  #Content
-  
-
-}
-
-function Set-InputFileData
-{
-  #Content
-  
-
-}
-
-
-Export-NpsConfiguration -Path "<Path>\$($env:COMPUTERNAME)-NPS-$(Get-Date -Uformat %Y%m%d).xml"
-Copy-Item -Path "<Same Path\$($env:COMPUTERNAME)-NPS-$(Get-Date -Uformat %Y%m%d).xml" -Destination '<UNC Path>'
-exit
-
+'@
+New-IseSnippet -Text $m -Title 'New-TimedStampFileName' -Description 'Standard filenames with timestamps.  Does not create the file.  Just the file name.' -Author 'Knarr Studio'
 

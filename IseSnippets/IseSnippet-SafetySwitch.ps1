@@ -1,4 +1,5 @@
-﻿
+﻿$m = @'
+
 Function Set-SafetySwitch
 {
   <#
@@ -16,3 +17,5 @@ Function Set-SafetySwitch
     Write-Host 'Safety ON' -ForegroundColor Green
   }
 }
+'@
+New-IseSnippet -Text $m -Title 'Set-SafetySwitch' -Description 'Turns on "WhatIf" for the entire script' -Author 'Knarr Studio'
