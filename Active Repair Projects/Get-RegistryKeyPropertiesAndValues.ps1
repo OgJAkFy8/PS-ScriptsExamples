@@ -1,12 +1,5 @@
-﻿# NOT Operational ##
+﻿Function Get-RegistryKeyPropertiesAndValues {
 
-
-
-
-
-Function Get-RegistryKeyPropertiesAndValues
-
-{
   <#
 
       .Synopsis
@@ -19,7 +12,7 @@ Function Get-RegistryKeyPropertiesAndValues
 
       .Example
 
-      Get-RegistryKeyPropertiesAndValues -path 'HKCU:\Volatile Environment'
+      Get-RegistryKeyPropertiesAndValues -path ‘HKCU:\Volatile Environment’
 
       Returns all of the registry property values under the \volatile environment key
 
@@ -49,26 +42,38 @@ Function Get-RegistryKeyPropertiesAndValues
 
   Param(
 
-    [Parameter(Mandatory)][string]$path 
-    
-    )
+    [Parameter(Mandatory=$true)]
 
- 
-  Get-childitem -Path $path | ForEach-Object{ Get-ItemProperty -Path $_} -ExpandProperty property | ForEach-Object -Process {New-Object -TypeName psobject -Property @{
-  'property' = $_ 
-      'Value'  = (Get-ItemProperty -Path . -Name $_).$_
-    }
-  }
+  [string]$path)
+
+  Push-Location
+
+  Set-Location -Path $path
+
+  Get-Item . |
+
+  Select-Object -ExpandProperty property |
+
+  ForEach-Object {
+
+    New-Object psobject -Property @{“property”=$_;
+
+    “Value” = (Get-ItemProperty -Path . -Name $_).$_}}
+
+  Pop-Location
 
 } #end function Get-RegistryKeyPropertiesAndValues
 
-Get-RegistryKeyPropertiesAndValues $path = "HKLM:\SOFTWARE\RealVNC"
+Get-RegistryKeyPropertiesAndValues -path 'HKLM:\SOFTWARE\RealVNC' 
 
+$r = Get-ChildItem -Path 'hklm:\SOFTWARE\Sunplus SPUVCb' |
+Where-Object -Property PSChildName -EQ -Value 'VIDEOPROCAMP' |
+Select-Object -Property ZoomScale  Get-ChildItem 'hklm:\SOFTWARE\Sunplus SPUVCb' |
+Where-Object -Property PSChildName -EQ -Value 'VIDEOPROCAMP' |
+Select-Object -Property ZoomScale  * PSPath 
 
-
-$r = 
-$r = Get-ChildItem 'hklm:\SOFTWARE\Sunplus SPUVCb' | where PSChildName -eq 'VIDEOPROCAMP' | select -Property ZoomScale  Get-ChildItem 'hklm:\SOFTWARE\Sunplus SPUVCb' | where PSChildName -eq 'VIDEOPROCAMP' | select -Property ZoomScale  * PSPath ; if ($r.PSChildName -eq 'Tableau'){Write-Host 'Found it' -f Green}
-
-
+if ($r.PSChildName -eq 'Tableau')
+{
+  Write-Host 'Found it' -f Green
+}
 (Get-Item -Path 'hklm:\SOFTWARE\Sunplus SPUVCb').    OpenSubKey('VIDEOPROCAMP')
-
