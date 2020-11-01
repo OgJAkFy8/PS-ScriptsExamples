@@ -10,83 +10,7 @@ $TestSplat = @{
 
 function Test-FiberSatellite
 {
-  <#
-      .SYNOPSIS
-      "Pings" a group of sites or servers and gives a response in laymans terms.
 
-      .DESCRIPTION 
-      "Pings" a group of sites or servers and gives a response in laymans terms. 
-      This started due to our need to find out if transport was over fiber or bird.  
-      There are some default remote sites that it will test, but you can pass your own if you only want to check one or two sites. 
-
-      .PARAMETER Sites
-      A single or list of sites or servers that you want to test against.
-
-      .PARAMETER Simple
-      Provides a single output line for those who just need answers.
-
-      .PARAMETER Log
-      Sends the output to a log file.
-
-      .PARAMETER ReportFolder
-      The folder where the output log will be sent.
-
-      .EXAMPLE
-      Test-FiberSatellite -Sites Value
-      The default values are: ('localhost', 'www.google.com', 'www.bing.com', 'www.wolframalpha.com', 'www.yahoo.com')
-    
-      .EXAMPLE
-      Test-FiberSatellite -Simple
-      Creates a simple output using the default site list
-
-      .EXAMPLE
-      Test-FiberSatellite -Log -ReportFile Value
-      Creates a log file with the year and month to create a monthly log.
-
-      .EXAMPLE
-      Test-FiberSatellite -Log -ReportCsv Value
-      If the file exist is will add the results to that file for trending.  If it doesn't exist, it will create it.
-
-      .LINK
-      https://github.com/KnarrStudio/ITPS.OMCS.Tools/wiki/Test-FiberSatellite
-
-      .INPUTS
-      List of input types that are accepted by this function.
-
-      .OUTPUTS
-      To console or screen at this time.
-  #>
-  <#PSScriptInfo
-
-      .VERSION 4.0
-
-      .GUID 676612d8-4397-451f-b6e3-bc3ae055a8ff
-
-      .AUTHOR Erik
-
-      .COMPANYNAME Knarr Studio
-
-      .COPYRIGHT
-
-      .TAGS Test, Console, NonAdmin User
-
-      .LICENSEURI
-
-      .PROJECTURI  https://github.com/KnarrStudio/ITPS.OMCS.Tools
-
-      .ICONURI
-
-      .EXTERNALMODULEDEPENDENCIES NetTCPIP
-
-      .REQUIREDSCRIPTS
-
-      .EXTERNALSCRIPTDEPENDENCIES
-
-      .RELEASENOTES
-
-      .PRIVATEDATA
-
-  #>
 
   [cmdletbinding(DefaultParameterSetName = 'Default')]
   param
@@ -109,7 +33,7 @@ function Test-FiberSatellite
           {
             Throw 'Input file needs to be CSV'
           }
-    })][String]$ReportCsv
+    })][String]$ReportCsv =  'c:\temp\testhtmlfiber.csv'
   )
   
   #region Initial Setup
@@ -134,7 +58,7 @@ function Test-FiberSatellite
     
   
   $OutputTable = @{
-    Title  = "`nThe Ping-O-Matic Fiber Tester!"
+    Title  = "The Ping-O-Matic Fiber Tester!"
     Green  = ' Round Trip Time is GOOD!'
     Yellow = ' The average is a little high.  An email will be generated to send to the Netowrk team to investigate.'
     Red    = ' Although not always the case this could indicate that you are on the Satellite.'
@@ -184,7 +108,7 @@ function Test-FiberSatellite
       $PingReportInput = Import-Csv -Path $ReportCsv
       $ColumnNames = ($PingReportInput[0].psobject.Properties).name
       # Add any new sites to the report file
-      foreach($site in $Sites)
+      foreach  ($site in $Sites)
       {
         Write-Verbose -Message ('Line {0}: Message: {1}' -f $(Get-CurrentLineNumber), $site)
         if(! $ColumnNames.contains($site))
@@ -226,6 +150,7 @@ function Test-FiberSatellite
     {
       #$TotalResponses = $TotalResponses - 1
       $NotRight ++
+      $RoundTripTime = 'Did not reply'
       [String]$OutputMessage = ('{0} - Did not reply' -f $site)
     }
     
@@ -279,15 +204,28 @@ function Test-FiberSatellite
  
   $head = @"
 <style>
-body   {background-color:peachpuff;
-        font-family:Tahoma;
-        font-size:12pt;}
-td, th {border:1px solid black;
-        border-collapse:collapse;}
-th     {color:magenta;
-        background-color:blank;}
-table, tr, td, th {padding: 2px; margin: 0px}
-table  {margin-left:50px;}
+body   {
+    color:Yellow;
+    background-color:Navy;
+    font-family:Tahoma;
+    font-size:12pt;
+    }
+
+table, tr, td {
+    border:1px solid Crimson;
+    color:Pink;
+    background-color:Green;
+    }
+
+th  {
+    color:Cyan;
+    background-color:blank;
+    }
+
+table  {
+    margin-left:50px;
+    }
+
 </style>
 "@
 
@@ -303,30 +241,35 @@ table  {margin-left:50px;}
 
   #  $LogOutput | Add-Content -Path $ReportFile
 
-  $Log1 += [PSCustomObject]$PingStat.Keys | ConvertTo-Html -Fragment
-  #$Log1 += $LogOutput
- # $Log1 +=   $($OutputTable.Report)
-  #$Log1 +=  ('You can find the full report at: {0}' -f $ReportFile)
-  $Log2 = convertto-html -head $head -postcontent $Log1 # -body "<h2>Ping-O-Matic!</h2>"
+
+  $Log1 += [PSCustomobject]$OutputTable.Title | ConvertTo-Html  -PreContent "<h1>$_</h1>"
+
+
   
-  $Log2 | Out-File C:\temp\fibertest.html 
+  $PingStat | ConvertTo-Html -Head $head | Out-File C:\temp\fibertest1.html 
     
-  Start-Process -FilePath msedge.exe -ArgumentList  C:\temp\fibertest.html
+  Start-Process -FilePath msedge.exe -ArgumentList  C:\temp\fibertest1.html
     
     
   #region File Output 
   If($Log)
   {
     # Export the hashtable to the file
-    $PingStat |
+    $Output += $PingStat |
     ForEach-Object -Process {
       [pscustomobject]$_
-    } |     
-    convertto-html -fragment -As Table | Out-File C:\temp\fibertest2.html -Append
-    #Export-Csv -Path $ReportCsv -NoTypeInformation -Force -Append
+    } 
+    Export-Csv -Path $ReportCsv -NoTypeInformation -Force -Append
   }
+  #$OutputFile = $Output | convertto-html -fragment -As Table #-Head $head 
+    
   #endregion File Output 
-}
+
+#$ReportCsv = Import-Csv $PingStat
+
+$ReportCsv | ConvertTo-Html -Head $head | out-file "C:\temp\fibertest1.html" -Append
+
+ }
 
 
 Test-FiberSatellite @TestSplat

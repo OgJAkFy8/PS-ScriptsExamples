@@ -1,20 +1,37 @@
 ﻿#requires -Version 4.0
 
-function Show-Output
-{
+
+function Get-ServiceList {
   param
   (
     [Parameter(Mandatory, ValueFromPipeline, HelpMessage = 'Data to filter')]
-    [Object]$InputObject,
-    [Parameter(Mandatory,HelpMessage = 'Service Status')]
+    [Object[]]$InputObject,
+    [Parameter(Mandatory,HelpMessage = 'Servive Status')]
     [ValidateSet('Running','Stopped')]
-    [Object]$Status
+    [Object]$Status,
+    [Parameter(Mandatory,HelpMessage = 'Service Starup Type')]
+    [ValidateSet('Automatic','Manual')]
+    [Object]$StartType
   )
-  
-  $AsciiCheckBox = '[ ]'
-  $DoubleLineBoarder = "`n=============================`n"
+  Begin
+  {
+   $ServiceList = [PSCustomobject]@{
+   Name = ''
+   Status = ''
+   DisplayName = ''
+   }
+    
+  }
 
-  If($Status -eq 'Running')
+  process {
+   foreach($Service in $InputObject){
+    $Svc = Get-Service -Name $Service.Name | select -Property * 
+
+    if (($Svc.Status -eq $Status) -and ($Svc.StartType -eq $StartType)) {
+    $ServiceList.Name = $Svc.Name
+    #Status = $Svc.Status
+    $ServiceList.DisplayName = $Svc.DisplayName
+    If($Svc.Status -eq 'Running')
   {
     $HighLightColor = 'Green'
   }
@@ -23,45 +40,19 @@ function Show-Output
     $HighLightColor = 'Red'
   }
 
-  If ($InputObject.count -ne 0)
+  If ($ServiceList.count -ne 0)
   {
     Write-Host $AsciiCheckBox -foreground White -BackgroundColor $HighLightColor -NoNewline
-    Write-Output -InputObject " Services $Status"
-    $InputObject
-    Write-Host $DoubleLineBoarder -foregroundcolor $HighLightColor
-  }
-}
+    Write-Output -InputObject (" {0,-9} : {1,-34} : {2,-$(($Svc.displayName).length +2)}" -f $Svc.StartType, $Svc.Name, $Svc.DisplayName)
+    }
 
-function Get-ServiceList
-{
-  param
-  (
-    [Parameter(Mandatory, ValueFromPipeline, HelpMessage = 'Data to filter')]
-    [Object]$InputObject,
-    [Parameter(Mandatory,HelpMessage = 'Servive Status')]
-    [ValidateSet('Running','Stopped')]
-    [Object]$Status,
-    [Parameter(Mandatory,HelpMessage = 'Service Starup Type')]
-    [ValidateSet('Automatic','Manual')]
-    [Object]$StartType
-  )
-  process
-  {
-    if (($InputObject.Status -eq $Status) -and ($InputObject.StartType -eq $StartType))
-    {
-      $InputObject
     }
   }
+  }
+  End {  }
 }
 
-$ServiceStopped = Get-Service | Get-ServiceList -Status Stopped -StartType Automatic
 
-$ServiceRunning = Get-Service | Get-ServiceList -Status Running -StartType Automatic
-
-
-$ServiceRunning | Show-Output -Status Running
-$ServiceStopped | Show-Output -Status Stopped
-
-#
+Get-Service | Get-ServiceList -Status Running -StartType Automatic
 
 
