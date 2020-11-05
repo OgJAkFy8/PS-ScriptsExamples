@@ -1,4 +1,4 @@
-﻿$r = Get-ChildItem 
+﻿$r = Get-ChildItem C:\Windows -File
 $t = ('red','blue','yellow','green','cyan')
 foreach($f in $r){
 $y = Get-Random -Minimum 0 -Maximum 4

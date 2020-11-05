@@ -1,58 +1,79 @@
 ﻿#requires -Version 4.0
 
 
-function Get-ServiceList {
+function Get-ServiceList 
+{
   param
   (
-    [Parameter(Mandatory, ValueFromPipeline, HelpMessage = 'Data to filter')]
+    [Parameter(Mandatory, Position = 0, HelpMessage = 'Data to filter')]
     [Object[]]$InputObject,
-    [Parameter(Mandatory,HelpMessage = 'Servive Status')]
+    [Parameter(Mandatory,Position = 1,HelpMessage = 'Servive Status')]
     [ValidateSet('Running','Stopped')]
-    [Object]$Status,
-    [Parameter(Mandatory,HelpMessage = 'Service Starup Type')]
+    [String]$Status,
+    [Parameter(Mandatory = $false,Position = 2,HelpMessage = 'Service Starup Type')]
     [ValidateSet('Automatic','Manual')]
-    [Object]$StartType
+    [String]$StartType = 'Automatic'
   )
   Begin
   {
-   $ServiceList = [PSCustomobject]@{
-   Name = ''
-   Status = ''
-   DisplayName = ''
-   }
+    $ServiceList = [PSCustomobject]@{
+      Name        = ''
+      Status      = ''
+      DisplayName = ''
+    }
     
+    $AsciiCheckBox = '[ ]'
+    $CharLength = 20
+   
+    $InputObjectModified = $InputObject |
+    Where-Object -FilterScript {
+      $_.StartType -eq $StartType
+    } |
+    Select-Object -Property Name, DisplayName, Status, StartType
+    
+    $CharLength = ($InputObjectModified |
+      Sort-Object -Property {
+        $_.Name.Length
+      } |
+    Select-Object -expand Name -Last 1).length
+ 
   }
 
   process {
-   foreach($Service in $InputObject){
-    $Svc = Get-Service -Name $Service.Name | select -Property * 
 
-    if (($Svc.Status -eq $Status) -and ($Svc.StartType -eq $StartType)) {
-    $ServiceList.Name = $Svc.Name
-    #Status = $Svc.Status
-    $ServiceList.DisplayName = $Svc.DisplayName
-    If($Svc.Status -eq 'Running')
-  {
-    $HighLightColor = 'Green'
-  }
-  else
-  {
-    $HighLightColor = 'Red'
-  }
 
-  If ($ServiceList.count -ne 0)
-  {
-    Write-Host $AsciiCheckBox -foreground White -BackgroundColor $HighLightColor -NoNewline
-    Write-Output -InputObject (" {0,-9} : {1,-34} : {2,-$(($Svc.displayName).length +2)}" -f $Svc.StartType, $Svc.Name, $Svc.DisplayName)
+  
+    foreach($Service in $InputObjectModified)
+    {
+      <#      if ($Service.Status -eq $Status) {
+          $ServiceList.Name = $Service.Name
+          $ServiceList.DisplayName = $Service.DisplayName
+      #>
+      If($Service.Status -eq 'Running')
+      {
+        $HighLightColor = 'Green'
+      }
+      else
+      {
+        $AsciiCheckBox = '[X]'
+        $HighLightColor = 'Red'
+      }
+
+      If ($ServiceList.count -ne 0)
+      {
+        Write-Host -Object $AsciiCheckBox -ForegroundColor White -BackgroundColor $HighLightColor -NoNewline
+        Write-Output -InputObject (" {0,-9} : {1,-$($CharLength+1)} : {2}" -f $Service.StartType, $Service.Name, $Service.DisplayName)
+      }
+
+      # }
     }
+  }
+  End {  
 
-    }
   }
-  }
-  End {  }
 }
 
 
-Get-Service | Get-ServiceList -Status Running -StartType Automatic
+Get-ServiceList -InputObject (Get-Service) -Status Stopped 
 
 
