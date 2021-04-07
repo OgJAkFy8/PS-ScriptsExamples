@@ -14,7 +14,7 @@ $MenuList = (@"
 
 --------------------------------------------------
 "@  -f $MenuTitle )
-Wrtie-Host $MenuList -ForegroundColor Green
+Write-Host $MenuList -ForegroundColor Green
 $answer = Read-Host -Prompt 'Please Make a Selection'  
 #Quick Menu. 
 while ($choice -ne 0)
@@ -43,5 +43,5 @@ while ($choice -ne 0)
 }
 '@ )
 
-New-IseSnippet -Text $m -Title 'Menu - Quick' -Description 'A quick menu.' -Author 'Knarr Studio'
+New-IseSnippet -Text $m -Title 'ks: Menu - Quick' -Description 'A quick menu.' -Author 'Knarr Studio' -Force
 

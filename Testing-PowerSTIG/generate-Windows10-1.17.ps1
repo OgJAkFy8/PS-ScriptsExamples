@@ -22,4 +22,4 @@
     }
 }
 
-Example -OutputPath 'C:\Users\Erik.Arnesen\Documents\GitHub\PS-Scripts\Testing-PowerSTIG'
+Example -OutputPath '.\'

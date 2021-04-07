@@ -32,28 +32,4 @@ $option4 = New-Object System.Management.Automation.Host.ChoiceDescription "&Crea
 $options = [System.Management.Automation.Host.ChoiceDescription[]]($option1, $option2, $option3, $option4)
 $backup=$host.ui.PromptForChoice($title, $message, $options, [int[]](1))
 
-
-
-
-
-
-
-### Kill the process that the user selects
-$Process = Get-Process | Out-GridView -Title 'Please select a process to kill' -OutputMode Single;
-Stop-Process -InputObject $Process;
-
-### Kill multiple processes that the user selects
-$ProcessList = Get-Process | Out-GridView -Title 'Please select a process to kill' -OutputMode Multiple;
-Stop-Process -InputObject $ProcessList;
-
-### Prompt the user to abort or retry some operation, using custom input values
-do {
-    $Result = @('Abort', 'Retry') | Out-GridView -Title 'Which action should be performed?' -OutputMode Single;
-} while ($Result -eq 'Retry');
-
 }
-
-
-
-
-

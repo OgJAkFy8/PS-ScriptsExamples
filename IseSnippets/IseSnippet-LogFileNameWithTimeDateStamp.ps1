@@ -67,5 +67,5 @@ $m = @'
   }
 }
 '@
-New-IseSnippet -Text $m -Title 'New-TimedStampFileName' -Description 'Standard filenames with timestamps.  Does not create the file.  Just the file name.' -Author 'Knarr Studio'
+New-IseSnippet -Text $m -Title 'ks: New-TimedStampFileName' -Description 'Standard filenames with timestamps.  Does not create the file.  Just the file name.' -Author 'Knarr Studio'
 
