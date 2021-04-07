@@ -1,4 +1,4 @@
-﻿#requires -Version 4.0
+﻿#requires -Version 3.0
 
 
 function Get-ServiceList 
@@ -45,13 +45,15 @@ function Get-ServiceList
   
     foreach($Service in $InputObjectModified)
     {
-      <#      if ($Service.Status -eq $Status) {
+      if ($Service.Status -ne $Status) {
           $ServiceList.Name = $Service.Name
           $ServiceList.DisplayName = $Service.DisplayName
-      #>
+          
+
       If($Service.Status -eq 'Running')
       {
-        $HighLightColor = 'Green'
+        $AsciiCheckBox = '( )'
+        $HighLightColor = 'black'
       }
       else
       {
@@ -65,7 +67,7 @@ function Get-ServiceList
         Write-Output -InputObject (" {0,-9} : {1,-$($CharLength+1)} : {2}" -f $Service.StartType, $Service.Name, $Service.DisplayName)
       }
 
-      # }
+       }
     }
   }
   End {  
@@ -74,6 +76,6 @@ function Get-ServiceList
 }
 
 
-Get-ServiceList -InputObject (Get-Service) -Status Stopped 
+Get-ServiceList -InputObject (Get-Service) -Status Running
 
 
