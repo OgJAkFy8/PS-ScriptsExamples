@@ -1,0 +1,31 @@
+<html>
+<head>
+<style>
+table.GoNavyTable {
+  font-family: "Lucida Console", Monaco, monospace;
+  width: 60%;
+  text-align: center;
+}
+table.GoNavyTable td, table.GoNavyTable th {
+}
+table.GoNavyTable tbody td {
+  font-size: 12px;
+  color: #000000;
+}
+table.GoNavyTable tr:nth-child(even) {
+  background: #D0E4F5;
+}
+table.GoNavyTable thead {
+  background: #000181;
+}
+table.GoNavyTable thead th {
+  font-size: 14px;
+  font-weight: bold;
+  color: #FFDB59;
+  text-align: center;
+}
+</style>
+</head>
+
+<table class="GoNavyTable">
+
