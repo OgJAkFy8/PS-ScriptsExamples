@@ -27,6 +27,7 @@ Write-Host 'Example 3: JSON -' $json.Color
 # Example 4: JSON with headings
 $ConfigFile = '.\config2.json '
 $HashConfig = Get-Content $ConfigFile | ConvertFrom-Json -AsHashtable
-Write-Host 'Example 4: JSON with headings -' $HashConfig.Other.Color
+$SplatSettings = $HashConfig.Other
+Write-Host 'Example 4: JSON with headings -' $SplatSettings.Color
 
 
