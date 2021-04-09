@@ -20,12 +20,13 @@ Write-Host 'Example 2: Hash Table -' $hashset.Color
 
 
 # Example 3: JSON
-$json = Get-Content .\config.json | ConvertFrom-Json
+$json = Get-Content .\config.json | ConvertFrom-Json -AsHashtable
 Write-Host 'Example 3: JSON -' $json.Color
 
 
 # Example 4: JSON with headings
-$json = Get-Content .\config2.json | ConvertFrom-Json
-Write-Host 'Example 4: JSON with headings -' $json.Other.Color
+$ConfigFile = '.\config2.json '
+$HashConfig = Get-Content $ConfigFile | ConvertFrom-Json -AsHashtable
+Write-Host 'Example 4: JSON with headings -' $HashConfig.Other.Color
 
 
