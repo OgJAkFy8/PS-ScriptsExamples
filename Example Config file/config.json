@@ -1,0 +1,8 @@
+﻿{
+    "InputFile":  "\"C:\\Users.txt\"",
+    "WaitForTime":  "20 ",
+    "OutputFile":  "\".\\output.log\"",
+    "Color":  "Blue bunny suit",
+    "MySetting1":  "value=asdf=34",
+    "VerboseLogging":  "True"
+}

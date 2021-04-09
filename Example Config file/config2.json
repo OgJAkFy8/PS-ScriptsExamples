@@ -1,0 +1,26 @@
+﻿{
+  "General": {
+    "MySetting1": [
+      "value=asdf=34"
+    ]
+  },
+  "Locations": {
+    "InputFile": [
+      "\"C:\\Users.txt\""
+    ],
+    "OutputFile": [
+      "\".\\output.log\""
+    ]
+  },
+  "Other": {
+    "WaitForTime": [
+      "20"
+    ],
+    "Color": [
+      "Blue bunny suit"
+    ],
+    "VerboseLogging": [
+      "True"
+    ]
+  }
+}

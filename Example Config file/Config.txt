@@ -1,0 +1,11 @@
+﻿[General]
+MySetting1=value
+
+[Locations]
+InputFile="C:\Users.txt"
+OutputFile="C:\output.log"
+
+[Other]
+WaitForTime=20
+VerboseLogging=True
+Color=Blue bunny suit
