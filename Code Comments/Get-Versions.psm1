@@ -53,3 +53,4 @@ function Get-Versions
   return $x
 }
 
+Export-ModuleMember -Function Get-Versions
