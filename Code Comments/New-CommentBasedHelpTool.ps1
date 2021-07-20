@@ -1,8 +1,12 @@
-﻿#requires -Version 3.0
-$ScriptName = Read-Host('Enter the file or script name')
+﻿#!/usr/bin/env powershell
+#requires -Version 3.0
+
+Import-Module -Name .\Get-Versions.psm1
+
+$ScriptName = Read-Host -Prompt ('Enter the file or script name')
 $HshTbl = [ordered]@{
-  SYNOPSIS    = "SYNOPSIS - Describe purpose of '$ScriptName' in 1-2 sentences"
-  DESCRIPTION = "DESCRIPTION - Add a more complete description of what '$ScriptName'  does"
+  SYNOPSIS    = ("SYNOPSIS - Describe purpose of '{0}' in 1-2 sentences" -f $ScriptName)
+  DESCRIPTION = ("DESCRIPTION - Add a more complete description of what '{0}'  does" -f $ScriptName)
   EXAMPLE     = 'EXAMPLE - Provied an example '
   NOTES       = 'NOTES - Place additional notes here '
   LINK        = 'LINK - URLs to related sites.  The first link is opened by Get-Help -Online test'
@@ -19,7 +23,7 @@ foreach($key in $HshTbl.Keys.Clone())
   }
 
   $HshTbl[$key] = $response
-  }
+}
 
 
 $OutClip = (@'
@@ -46,5 +50,9 @@ $OutClip = (@'
     {6}
 '@ -f $HshTbl['SYNOPSIS'], $HshTbl['DESCRIPTION'], $HshTbl['EXAMPLE'], $HshTbl['NOTES'], $HshTbl['LINK'], $HshTbl['INPUTS'], $HshTbl['OUTPUTS'])
   
-Write-Host $OutClip
-$OutClip | clip.exe
+Write-Output -InputObject $OutClip
+
+if($(Get-Versions) -eq 'Windows')
+{
+  $OutClip | & "$env:windir\system32\clip.exe"
+}
