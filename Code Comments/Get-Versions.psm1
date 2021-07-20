@@ -1,5 +1,5 @@
 ﻿#!/usr/bin/env powershell
-
+#requires -Version 2.0
 function Get-Versions
 {
   <#
@@ -9,18 +9,9 @@ function Get-Versions
   [CmdletBinding()]
   param
   ([Parameter(Mandatory = $false, Position = 0)]$input
-  
   )
-    
-    
   [String]$MagMinVer = '{0}.{1}'
-    
   [Float]$PsVersion = ($MagMinVer -f [int]($psversiontable.PSVersion).Major, [int]($psversiontable.PSVersion).Minor)
-  
-  
-  #requires -Version 1.0
-  
-  
   if($PsVersion  -ge 6)
   {
     if ($IsLinux) 
@@ -49,8 +40,6 @@ function Get-Versions
     PSversion = $PsVersion
     OSVersion = $OperatingSys
   }
-  
   return $x
 }
-
 Export-ModuleMember -Function Get-Versions

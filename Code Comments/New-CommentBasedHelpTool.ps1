@@ -1,7 +1,10 @@
-﻿#!/usr/bin/env powershell
+﻿#requires -Modules Get-Versions
+#!/usr/bin/env powershell
 #requires -Version 3.0
 
-Import-Module -Name .\Get-Versions.psm1
+$FolderPath = Split-Path ($MyInvocation.MyCommand.Path) -Parent
+Import-Module -Name $FolderPath/Get-Versions.psm1
+
 
 $ScriptName = Read-Host -Prompt ('Enter the file or script name')
 $HshTbl = [ordered]@{
