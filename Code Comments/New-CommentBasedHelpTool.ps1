@@ -1,4 +1,4 @@
-﻿#requires -Modules Get-Versions
+﻿#requires -Modules TPS.OMCS.CodingTools
 #!/usr/bin/env powershell
 #requires -Version 3.0
 
