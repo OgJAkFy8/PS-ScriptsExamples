@@ -1,53 +1,64 @@
-﻿Function Set-SafetySwitch
+﻿#!/usr/bin/env powershell
+Function Set-SafetySwitch
 {
   <#
       .SYNOPSIS
-      Turns on "WhatIf" for the entire script
+      Turns on "WhatIf" for the entire script.
+      Like a gun safety, "ON" will prevent the script from running and "OFF" will allow the script to make changes.
 
-      .PARAMETER toggle
-      Currently does nothing.  I may set it up to take an ON/OFF later on
+      .PARAMETER RunScript
+      Manually sets the "Safety" On/Off.
+
+      .PARAMETER Toggle
+      changes the setting from its current state
 
       .PARAMTER Bombastic
       Another word for verbose
+      It also is a toggle, so that you can add it to a menu.
 
       .EXAMPLE
       Set-SafetySwitch 
       Sets the WhatIfPreference to the opposite of its current setting
 
       .NOTES
-      Best to just copy this into your script and call it how ever you want.  I use a menu
+      Best to just copy this into your script and call it how ever you want.I use a menu
 
   #>
-  [CmdletBinding()]
+  
+  [CmdletBinding(SupportsShouldProcess,ConfirmImpact = 'Low',DefaultParameterSetName = 'Default')]
   param
   (
+    [Parameter(Position = 1)]
     [Switch]$Bombastic,
-    [Object]$toggle
+    [Parameter(Mandatory,HelpMessage='Hard set on/off',Position = 0,ParameterSetName = 'Switch')]
+    [ValidateSet('No','Yes')]
+    [String]$RunScript,
+    [Parameter(Position = 0, ParameterSetName = 'Default')]
+    [Switch]$Toggle = $true
   )
 
   $Message = @{
-    NormalOff    = 'Safety OFF - Script will run'
-    NormalOn     = 'Safety ON'
     BombasticOff = 'Safety is OFF - Script is active and will make changes'
-    BombasticOn  = 'Safety is ON - Script is TESTING MODE'
-  }
-  $MsgOn = $Message.NormalOn
-  $MsgOff = $Message.NormalOff
-
-  if ($Bombastic)
-  {
-    $MsgOn = $Message.BombasticOn
-    $MsgOff = $Message.BombasticOff
+    BombasticOn= 'Safety is ON - Script is TESTING MODE'
   }
 
-  If ($WhatIfPreference -eq $true)
-  {
-    $Script:WhatIfPreference = $false
-    Write-Host $MsgOff -ForegroundColor Red
+  function Set-WhatIfOn{$Script:WhatIfPreference = $true}
+  function Set-WhatIfOff{$Script:WhatIfPreference = $false}
+
+  if($Toggle){
+    If ($WhatIfPreference -eq $true)
+    {
+      Set-WhatIfOff
+      if ($Bombastic){Write-Host $($Message.BombasticOff) -ForegroundColor Red}
+    }
+    else
+    {
+      Set-WhatIfOn
+      if ($Bombastic){Write-Host $($Message.BombasticOn) -ForegroundColor Green}
+    }
   }
-  else
-  {
-    $Script:WhatIfPreference = $true
-    Write-Host $MsgOn -ForegroundColor Green
-  }
+
+  if($RunScript -eq 'Yes'){Set-WhatIfOff}
+  elseif($RunScript -eq 'No'){Set-WhatIfOn}
 }
+

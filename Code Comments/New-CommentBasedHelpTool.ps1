@@ -2,9 +2,14 @@
 #!/usr/bin/env powershell
 #requires -Version 3.0
 
-$FolderPath = Split-Path ($MyInvocation.MyCommand.Path) -Parent
-Import-Module -Name $FolderPath/Get-Versions.psm1
-
+try
+{
+  Import-Module -Name ITPS.OMCS.CodingTools
+}catch
+{
+  $FolderPath = Split-Path -Path ($MyInvocation.MyCommand.Path) -Parent
+  Import-Module -Name $FolderPath/Get-Versions.psm1
+}
 
 $ScriptName = Read-Host -Prompt ('Enter the file or script name')
 $HshTbl = [ordered]@{
