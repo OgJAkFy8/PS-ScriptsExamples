@@ -60,6 +60,45 @@ $SplatSendEmail = @{
 
 function Send-eMail
 {
+  <#
+      .SYNOPSIS
+      Send an email notification via script.  Uses local service account and mail server.
+
+      .DESCRIPTION
+      Send an email notification via script.  Uses local service account and mail server.
+      Sends and email from a script run at the server.  This generates output to the console.
+
+      .PARAMETER MailTo
+      Receivers email address
+
+      .PARAMETER MailFrom
+      Senders email address
+
+      .PARAMETER msgsubj
+      Email subject.  This is always a good idea.
+
+      .PARAMETER SmtpServers
+      Name or IP addess of SMTP servers
+
+      .PARAMETER MessageBody
+      The message.  This could be an error from  a catch statement or just information about it being completed
+
+      .PARAMETER AttachedFile
+      Email attachemt
+
+      .PARAMETER ErrorFile
+      File to send the error message.
+
+      .EXAMPLE
+      Send-eMail -MailTo Value -MailFrom Value -msgsubj Value -SmtpServers Value -MessageBody Value -AttachedFile Value -ErrorFile Value
+    
+      .NOTES
+      The current version is somewhat interactive and needs to be run from a console.  
+      Later versions should be written to be used without user intervention
+
+  #>
+
+
   [CmdletBinding(DefaultParameterSetName = 'Default')]
   param
   (
@@ -73,7 +112,7 @@ function Send-eMail
     [String[]]$SmtpServers,
     [Parameter(Position = 4)]
     [AllowNull()]
-    $MessageBody,
+    [Object]$MessageBody,
     [Parameter(Position = 5)]
     [AllowNull()]
     [Object]$AttachedFile,
@@ -91,7 +130,7 @@ function Send-eMail
   }
   elseif(($MessageBody -match '.txt') -or ($MessageBody -match '.htm'))
   {
-    if(Test-Path $MessageBody)
+    if(Test-Path -Path $MessageBody)
     {
       [String]$MessageBody = Get-Content -Path $MessageBody
     }
