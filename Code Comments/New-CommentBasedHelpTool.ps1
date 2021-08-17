@@ -1,16 +1,18 @@
-﻿#requires -Modules ITPS.OMCS.CodingTools
-#!/usr/bin/env powershell
+﻿#!/usr/bin/env powershell
 #requires -Version 3.0
 
-try
-{
-  Import-Module -Name ITPS.OMCS.CodingTools
-}catch
-{
-  $FolderPath = Split-Path -Path ($MyInvocation.MyCommand.Path) -Parent
-  Import-Module -Name $FolderPath/Get-Versions.psm1
-}
 
+if( -not (Get-Module -Name ITPS.OMCS.CodingFunctions))
+{
+  try
+  {
+    Import-Module -Name ITPS.OMCS.CodingFunctions
+  }
+  catch
+  {
+    Throw "Unable to import 'ITPS.OMCS.CodingFunctions' module"
+  }
+}
 $ScriptName = Read-Host -Prompt ('Enter the file or script name')
 $HshTbl = [ordered]@{
   SYNOPSIS    = ("SYNOPSIS - Describe purpose of '{0}' in 1-2 sentences" -f $ScriptName)
@@ -24,6 +26,7 @@ $HshTbl = [ordered]@{
 
 foreach($key in $HshTbl.Keys.Clone())
 {
+  $response = $null
   $response = Read-Host -Prompt $HshTbl[$key]
   if($response -eq '')
   {
@@ -35,6 +38,8 @@ foreach($key in $HshTbl.Keys.Clone())
 
 
 $OutClip = (@'
+
+function {7}
 
     .SYNOPSIS
     {0}
@@ -56,11 +61,19 @@ $OutClip = (@'
 
     .OUTPUTS
     {6}
-'@ -f $HshTbl['SYNOPSIS'], $HshTbl['DESCRIPTION'], $HshTbl['EXAMPLE'], $HshTbl['NOTES'], $HshTbl['LINK'], $HshTbl['INPUTS'], $HshTbl['OUTPUTS'])
-  
-Write-Output -InputObject $OutClip
 
-if($(Get-Versions) -eq 'Windows')
-{
-  $OutClip | & "$env:windir\system32\clip.exe"
-}
+
+'@ -f $HshTbl['SYNOPSIS'], $HshTbl['DESCRIPTION'], $HshTbl['EXAMPLE'], $HshTbl['NOTES'], $HshTbl['LINK'], $HshTbl['INPUTS'], $HshTbl['OUTPUTS'], ($ScriptName.Split('.')[0]))
+  
+New-Item -Path ('.\{0}' -f $ScriptName)
+$OutClip | Out-File -FilePath $('.\{0}' -f $ScriptName) -Append
+powershell_ise.exe -file $('.\{0}' -f $ScriptName)
+
+<#
+    $OutClip
+
+    if($(Get-Versions).osversion -eq 'Windows')
+    {
+    $OutClip | & "$env:windir\system32\clip.exe"
+    }
+#>
