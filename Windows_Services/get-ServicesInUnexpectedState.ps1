@@ -20,14 +20,12 @@
     .OUTPUTS
     List of output types produced by this function.
 #>
-
-
 function Get-MyColHealthNotOk
 {
   param
   (
-    [Parameter(Mandatory, ValueFromPipeline, HelpMessage='Data to filter')]
-    $InputObject
+    [Parameter(Mandatory, ValueFromPipeline, HelpMessage = 'Data to filter')]
+    [Object]$InputObject
   )
   process
   {
@@ -37,15 +35,12 @@ function Get-MyColHealthNotOk
     }
   }
 }
-
-
 # Find services in unexpected state
-
-$Services = get-wmiobject -Class win32_service -ErrorAction SilentlyContinue #| Where-Object {$_.DisplayName -like "Win*" }
-
+$Services = Get-WmiObject -Class win32_service -ErrorAction SilentlyContinue #| Where-Object {$_.DisplayName -like "Win*" }
 $myCol = @()
-Foreach ($service in $Services){
-  $MyDetails = '' | select-Object -Property Name, State, StartMode, Health
+Foreach ($service in $Services)
+{
+  $MyDetails = '' | Select-Object -Property Name, State, StartMode, Health
   If ($service.StartMode -eq 'Auto')
   {
     if ($service.State -eq 'Stopped')
@@ -88,6 +83,6 @@ Foreach ($service in $Services){
   }
   $myCol += $MyDetails
 }
-
-$Results = $MyCol | Get-MyColHealthNotOk
+$Results = $myCol | Get-MyColHealthNotOk
 $Results
+
