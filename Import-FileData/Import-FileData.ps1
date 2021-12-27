@@ -1,29 +1,9 @@
-﻿#!/usr/bin/env powershell
+
 $fileName = "$env:TMP/Example.csv"
 #Get-Process | Select-Object -Last 10 | Export-Csv -Path $fileName
 
 function Import-FileData
 {
-  <#
-    .SYNOPSIS
-    A function that will help import files
-
-    .DESCRIPTION
-    Add a more complete description of what the function does.
-
-    .PARAMETER fileName
-    Filename and path of the file you need to import data from
-
-    .PARAMETER FileType
-    File type to be imported, but really how you want it to be handled.  i.e.
-    Basically how you want to manage the import.  In otherwords, a 'txt' file could be imported as a csv.
-
-    .EXAMPLE
-    Import-FileData -fileName Value -FileType Value
-    
-  #>
-
-
   param(
     [Parameter(Mandatory,HelpMessage = 'Name of file to be imported.')]
     [String]$fileName,
