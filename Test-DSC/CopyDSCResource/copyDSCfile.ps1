@@ -12,13 +12,14 @@
         [ValidateNotNullOrEmpty()]
         [String]$ModulePath = "$PSHOME\modules\PSDesiredStateConfiguration\PSProviders"
     )
+Import-DscResource -ModuleName 'PSDesiredStateConfiguration'
 
     Node $NodeName {
         
 
 	File FindText  
 	{
-		DestinationPath           = "C:\temp\DSC_Test\Find-Text.pyw"
+		DestinationPath           = "C:\Users\erika\Documents\DSC_Test\Find-Text.pyw"
 		Force                     = $true
 		MatchSource               = $true
 		SourcePath                = $SourcePath
