@@ -12,3 +12,5 @@ $nht = @{
     Sub2 = 'grapes'
   }
 }
+
+$nht.Main2.Sub2
