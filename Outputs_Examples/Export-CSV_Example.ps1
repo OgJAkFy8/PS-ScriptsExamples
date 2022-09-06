@@ -7,7 +7,7 @@ $Boundaries = Import-Csv -Path $FilePath
 <#
 CSV format:
 Displayname,BoundaryType,Value
-S01,0,1
+Switch01,0,1
 #>
 
 
