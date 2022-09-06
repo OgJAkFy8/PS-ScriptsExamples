@@ -26,7 +26,7 @@
 $title = "Backup"
 $message = "Please select resources for backup!"
 $option1 = New-Object System.Management.Automation.Host.ChoiceDescription "Set Safety &On/Off", "Set-Safety"
-$option2 = New-Object System.Management.Automation.Host.ChoiceDescription "Remove Old COOPs &And Create New", "Remove-New"
+$option2 = New-Object System.Management.Automation.Host.ChoiceDescription "&Add New COOPs (Remove Old)", "Remove-New"
 $option3 = New-Object System.Management.Automation.Host.ChoiceDescription "&Remove Old COOPs", "Remove-COOPs"
 $option4 = New-Object System.Management.Automation.Host.ChoiceDescription "&Create New COOPs", "New-COOPs"
 $options = [System.Management.Automation.Host.ChoiceDescription[]]($option1, $option2, $option3, $option4)
